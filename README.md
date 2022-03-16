@@ -13,7 +13,7 @@ $ npm install
 Run the script using this syntax:
 ```bash
 Usage: node coubNode.js channelName coubType
-coubType: all | simples | recoubs | stories
+coubType: simples | recoubs
 
 Example:
 node coubNode.js animeCoubs77 recoubs
@@ -32,3 +32,4 @@ What could be improved:
 - storing not only the URLs but the titles too  
   this would allow to skip already downloaded coubs in case of some error
 - proper error handling
+- add stories handling

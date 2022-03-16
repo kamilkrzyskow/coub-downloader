@@ -68,12 +68,14 @@ const fetchCoubs = async (channelName, coubType) => {
         nextPage = jsonData.page + 1;
         let coubs = jsonData.coubs;
         
-        console.log(`Fetched ${coubs.length} coubs from page ${nextPage - 1}/${totalPages}. Total coub count: ${urlArray.length}`);
-        
         for (let i = 0; i < coubs.length; i++) {
             let permalink = coubs[i].permalink;
+            if (coubType === 'recoubs')
+                permalink = coubs[i].recoub_to.permalink;
             urlArray.push(`https://coub.com/view/${permalink}`);
         }
+        
+        console.log(`Fetched ${coubs.length} coubs from page ${nextPage - 1}/${totalPages}. Total coub count: ${urlArray.length}`);
         
         let writeStream = fs.createWriteStream(filename);
         urlArray.forEach(url => writeStream.write(`${url}\n`));
@@ -140,8 +142,8 @@ let argv = process.argv;
 if (argv.length != 4) {
     console.warn(`Expected 4 arguments found ${argv.length}`);
     console.warn(`Usage: \n\tnode ${argv[1].split("\\").pop()} channelName coubType`);
-    console.warn(`\tcoubType: \n\t\tall | simples | recoubs | stories`);
+    console.warn(`\tcoubType: \n\t\tsimples | recoubs`);
     process.exit(1);
 }
 
-fetchCoubs(argv[2], argv[3]);
+fetchCoubs(argv[2].trim(), argv[3].trim());
