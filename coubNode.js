@@ -34,7 +34,7 @@ const fetchCoubs = async (channelName, coubType) => {
     console.log(`Fetching data for ${channelName}`);
     console.log(`Fetching data of type ${coubType}`);
     
-    let filename = `./${STORAGE_DIR}/${channelName}.txt`;
+    let filename = `./${STORAGE_DIR}/${channelName}-${coubType}.txt`;
     
     let nextPage = 1;
     let totalPages = nextPage;
@@ -57,7 +57,7 @@ const fetchCoubs = async (channelName, coubType) => {
     if (urlArray.length > 0) {
         nextPage = urlArray.length / 25;
         totalPages = nextPage;
-        console.log(`File loaded. New nextPage = ${nextPage}`);
+        console.log(`${filename} loaded. New nextPage = ${nextPage}`);
     }
     
     while (nextPage <= totalPages) {
