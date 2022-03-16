@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "coub-dl": "^1.6.0",
+    "line-reader": "^0.4.0",
+    "node-fetch": "^2.6.7"
+  }
+}
