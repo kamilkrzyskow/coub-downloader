@@ -108,6 +108,20 @@ const saveCoubs = async set => {
     console.log('Start');
     console.log(`Amount of URLs: ${set.size}`);
     
+    let directoryPath = path.join(__dirname, COUB_DIR);
+    
+    await fs.promises.readdir(directoryPath)
+    .then( files => {
+        files.forEach(file => {
+            let permlink = file.split('-')[0];
+            let url = `https://coub.com/view/${permlink}`;
+            if (set.has(url))
+                set.delete(url);
+        }); 
+    });
+    
+    console.log(`Amount of URLs after file scan: ${set.size}`);
+    
     let arr = Array.from(set);
     
     for (let i = 0; i < arr.length; i++) {
