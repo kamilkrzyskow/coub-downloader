@@ -29,7 +29,5 @@ I didn't test it with 404 errors etc.
 What could be improved: 
 - async file read
 - categorizing the downloaded coub videos
-- storing not only the URLs but the titles too  
-  this would allow to skip already downloaded coubs in case of some error
 - proper error handling
 - add stories handling
