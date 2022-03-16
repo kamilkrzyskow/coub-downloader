@@ -127,6 +127,7 @@ const saveCoubs = async set => {
     for (let i = 0; i < arr.length; i++) {
         let url = arr[i];
         let permLink = url.split('/').pop();
+        console.log(`Fetching... ${url}`);
         let coub = await Coub.fetch(url, 'high');
         let title = coub.metadata.title.replace(/\W+/gi, ' ').trim();
         let path = `./${COUB_DIR}/${permLink}-${title}.mp4`;
