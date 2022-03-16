@@ -20,12 +20,12 @@ const sleep = ms => {
 }
 
 const readStorage = (filename) => {
-    let fileArray = [];
+    let fileSet = new Set();
     lineReader.eachLine(filename, (rawLine, last) => {
         let line = rawLine.trim();
-        fileArray.push(line);
+        fileSet.add(line);
     });
-    return fileArray;
+    return fileSet;
 }
 
 const fetchCoubs = async (channelName, coubType) => {
@@ -38,13 +38,13 @@ const fetchCoubs = async (channelName, coubType) => {
     
     let nextPage = 1;
     let totalPages = nextPage;
-    let urlArray = null;
+    let urlSet = null;
     
     fs.stat(filename, (err, stat) => {
         if (err === null)
-            urlArray = readStorage(filename);
+            urlSet = readStorage(filename);
         else
-            urlArray = [];
+            urlSet = new Set();
     });
     
     // console.log(`
@@ -54,8 +54,8 @@ const fetchCoubs = async (channelName, coubType) => {
     // `);
     await sleep(2000);
     
-    if (urlArray.length > 0) {
-        nextPage = urlArray.length / 25;
+    if (urlSet.size > 0) {
+        nextPage = Math.ceil(urlSet.size / 25);
         totalPages = nextPage;
         console.log(`${filename} loaded. New nextPage = ${nextPage}`);
     }
@@ -72,19 +72,19 @@ const fetchCoubs = async (channelName, coubType) => {
             let permalink = coubs[i].permalink;
             if (coubType === 'recoubs')
                 permalink = coubs[i].recoub_to.permalink;
-            urlArray.push(`https://coub.com/view/${permalink}`);
+            urlSet.add(`https://coub.com/view/${permalink}`);
         }
         
-        console.log(`Fetched ${coubs.length} coubs from page ${nextPage - 1}/${totalPages}. Total coub count: ${urlArray.length}`);
+        console.log(`Fetched ${coubs.length} coubs from page ${nextPage - 1}/${totalPages}. Total coub count: ${urlSet.size}`);
         
         let writeStream = fs.createWriteStream(filename);
-        urlArray.forEach(url => writeStream.write(`${url}\n`));
+        urlSet.forEach(url => writeStream.write(`${url}\n`));
         writeStream.end();
      
         await sleep(2000);
     }
     
-    saveCoubs(urlArray);
+    saveCoubs(urlSet);
 }
 
 const buildUrl = (channelName, coubType, pageNum) => {
@@ -104,15 +104,17 @@ const fetchJsonData = async url => {
         });
 }
 
-const saveCoubs = async arr => {
+const saveCoubs = async set => {
     console.log('Start');
-    console.log(`Amount of URLs: ${arr.length}`);
+    console.log(`Amount of URLs: ${set.size}`);
+    
+    let arr = Array.from(set);
     
     for (let i = 0; i < arr.length; i++) {
         let url = arr[i];
         let permLink = url.split('/').pop();
         let coub = await Coub.fetch(url, 'high');
-        let title = coub.metadata.title.trim();
+        let title = coub.metadata.title.replace(/\W+/gi, ' ').trim();
         let path = `./${COUB_DIR}/${permLink}-${title}.mp4`;
         coub.loop(12);
         coub.attachAudio();
